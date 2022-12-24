@@ -6,6 +6,7 @@ import {
   AppBridgeProvider,
   QueryProvider,
   PolarisProvider,
+  TabMenu
 } from "./components";
 
 export default function App() {
@@ -18,11 +19,16 @@ export default function App() {
       <BrowserRouter>
         <AppBridgeProvider>
           <QueryProvider>
+          <TabMenu></TabMenu>
             <NavigationMenu
               navigationLinks={[
                 {
-                  label: "Page name",
-                  destination: "/pagename",
+                  label: "Pixel",
+                  destination: "/pixel",
+                },
+                {
+                  label: "Help",
+                  destination: "/help",
                 },
               ]}
             />
