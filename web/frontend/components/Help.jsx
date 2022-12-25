@@ -1,15 +1,11 @@
 import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 
-export default function PageName() {
+export default function Help() {
   return (
     <Page>
       <TitleBar
         title="Help"
-        primaryAction={{
-          content: "Primary action",
-          onAction: () => console.log("Primary action"),
-        }}
       />
       <Layout>
         <Layout.Section>

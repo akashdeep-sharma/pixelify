@@ -20,19 +20,7 @@ export default function App() {
         <AppBridgeProvider>
           <QueryProvider>
           <TabMenu></TabMenu>
-            <NavigationMenu
-              navigationLinks={[
-                {
-                  label: "Pixel",
-                  destination: "/pixel",
-                },
-                {
-                  label: "Help",
-                  destination: "/help",
-                },
-              ]}
-            />
-            <Routes pages={pages} />
+          
           </QueryProvider>
         </AppBridgeProvider>
       </BrowserRouter>

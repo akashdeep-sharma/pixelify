@@ -1,5 +1,7 @@
 import {Card, Tabs} from '@shopify/polaris';
-import {useState, useCallback} from 'react';
+import {useState, useCallback, Component} from 'react';
+import  Help  from './Help';
+import Pixel  from './Pixel';
 
 
 export function TabMenu() {
@@ -27,13 +29,10 @@ export function TabMenu() {
   ];
 
   return (
-    <Card>
-      <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-        <Card.Section title={tabs[selected].content}>
-          <p>Tab {selected} selected</p>
-        </Card.Section>
-        {tabs[selected].content == "Pixel" ? <pixel></pixel> : <help></help> }
-      </Tabs>
-    </Card>
+    <>
+      <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}> </Tabs>
+        {tabs[selected].content == "Pixel" ? <Pixel></Pixel> : <Help></Help> }
+      
+    </>
   );
 }
