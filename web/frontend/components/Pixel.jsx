@@ -1,9 +1,34 @@
 import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayout } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
-import {useState, useCallback, Component} from 'react';
+import {useState, useCallback, useLayoutEffect} from 'react';
+import { useAppQuery, useAuthenticatedFetch } from "../hooks";
 
 export default function Pixel() {
+
+    const fetch = useAuthenticatedFetch();
+
+
+    async function loadShopConfig() {
+        var data = await fetch("/api/getIntialConfig");
+    
+        if (data.status == 200) 
+          data = await data.json();
+
+        console.log("load data", data);
+        setpixelId(data);
+
+      }
+    
+
+      useLayoutEffect(() => {
+        loadShopConfig();
+      },[]);
+
+
     const [ pixelId , setpixelId ] = useState(['666778897', '76786879']);
+
+ 
+
 
     const [ newPixelCard , setnewPixelCard ] = useState(false);
 
@@ -15,6 +40,23 @@ export default function Pixel() {
       [],
     );
 
+    async function onSubmitNewPixel() {
+        var data = await fetch("/api/addPixel",{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/text'
+          },
+          body: JSON.stringify({id: textFieldValue})
+        });
+    
+        if (data.status == 200){
+        data = await data.text();
+        console.log("Added new pixel", data);
+        setnewPixelCard(false)
+        }
+
+    }
+
     
   return (
     <Page>
@@ -25,7 +67,7 @@ export default function Pixel() {
         <Layout.Section>
         {pixelId.map( (id, index ) => (  
             <Card
-            title={ "Pixel number : " + (index + 1) }
+            title={ "Pixel Number " + (index + 1) }
             secondaryFooterActions={[{content: 'Delete'}]}
           >
             <Card.Section title={id}>
@@ -39,7 +81,7 @@ export default function Pixel() {
             <Card
             title= "Add New Pixel" 
             secondaryFooterActions={[{content: 'Cancel', onAction: () => setnewPixelCard(false) } ]}
-            primaryFooterAction={{content: 'Save'}}
+            primaryFooterAction={{content: 'Save',  onAction: onSubmitNewPixel }}
             >
             <Card.Section>
             <TextField
@@ -48,6 +90,7 @@ export default function Pixel() {
                             onChange={handleTextFieldChange}
                             placeholder="Example: 1234567890"
                             autoComplete="off"
+                            requiredIndicator
                             />
             </Card.Section>
            
