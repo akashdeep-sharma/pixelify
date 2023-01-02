@@ -7,7 +7,7 @@ import serveStatic from "serve-static";
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
-import { addMetafield, getAllMetfieldsValues } from "./helper.js";
+import { addMetafield, getAllMetfieldsValues, deletPixelID } from "./helper.js";
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
@@ -58,6 +58,12 @@ app.get("/api/products/create", async (_req, res) => {
 
 app.post("/api/addPixel", async (_req, res) => {
   await addMetafield({_req, res});
+  res.status(200).send("Success");
+})
+
+
+app.post("/api/deletPixelID", async (_req, res) => {
+  await deletPixelID({_req, res});
   res.status(200).send("Success");
 })
 

@@ -18,6 +18,9 @@ export default function Pixel() {
         setpixelId(data);
 
       }
+
+
+
     
 
       useLayoutEffect(() => {
@@ -25,7 +28,7 @@ export default function Pixel() {
       },[]);
 
 
-    const [ pixelId , setpixelId ] = useState(['666778897', '76786879']);
+    const [ pixelId , setpixelId ] = useState([]);
 
  
 
@@ -57,6 +60,25 @@ export default function Pixel() {
 
     }
 
+
+    async function deletPixelID(id) {
+      var data = await fetch("/api/deletPixelID",{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/text'
+        },
+        body: JSON.stringify({id: id})
+      });
+  
+      if (data.status == 200){
+      data = await data.text();
+      console.log("Deleted pixel", data);
+      loadShopConfig();
+      }
+
+  }
+
+
     
   return (
     <Page>
@@ -68,7 +90,7 @@ export default function Pixel() {
         {pixelId.map( (id, index ) => (  
             <Card
             title={ "Pixel Number " + (index + 1) }
-            secondaryFooterActions={[{content: 'Delete'}]}
+            secondaryFooterActions={[{content: 'Delete', onAction: () => deletPixelID(id) }]}
           >
             <Card.Section title={id}>
               

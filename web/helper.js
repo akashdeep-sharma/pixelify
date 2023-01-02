@@ -21,7 +21,71 @@ export async function getAllMetfieldsValues(data){
 
 
 
+export async function deletPixelID(data){
+  var  newID = await getRawBody(data._req);
+  newID = newID.toString();
+  newID = JSON.parse(newID);
+  console.log("here",newID.id);
 
+  var session = data.res.locals.shopify.session;
+  const clientRes = new shopify.api.clients.Rest({session})
+  const response = await clientRes.get({path: 'metafields', 	query: { "key": "pixelify",
+  "namespace": "IDs" }});
+  
+  var allpixelID = JSON.parse(response.body.metafields[0].value);
+
+  console.log(allpixelID);
+
+  var removedpixelIDs = allpixelID.filter(function(ele){ 
+    return ele != newID.id; 
+});
+
+
+console.log(removedpixelIDs);
+   
+const client = new shopify.api.clients.Graphql({ session });
+
+
+const queryString = `{
+  shop {
+    id
+    name
+    currencyCode
+    checkoutApiSupported
+    taxesIncluded
+  }
+
+}`
+
+
+const shop = await client.query({
+  data: queryString,
+});
+
+  var newlyMeta = await client.query({
+    data: {
+      query: CREATE_METFIELD_MUTATION,
+      variables: {
+
+            "metafields": [
+              {
+                "key": "pixelify",
+                "namespace": "IDs",
+                "type": "list.number_integer",
+                "value": JSON.stringify(removedpixelIDs),
+                "ownerId": shop.body.data.shop.id,
+              }
+            ]
+          
+      },
+    },
+  });
+  
+  console.log( JSON.stringify(newlyMeta.body.data.metafieldsSet) );
+
+
+  return;
+}
 
 
 async function addScriptIntoTheme(data){
