@@ -89,20 +89,27 @@ async function addScriptIntoTheme(data) {
   var session = data.session;
   const clientRes = new shopify.api.clients.Rest({ session });
 
-  const response = await clientRes.get({
-    path: 'themes',
-    query: { role: 'main' },
-  });
-
+  try {
+    const response = await clientRes.get({
+      path: 'themes',
+      query: { role: 'main' },
+    });
+  } catch (e) {
+    console.log(`${e} session-info ${session}`);
+  }
   console.log(response.body.themes[0]);
 
   // get existing theme.liquid code
-  const response2 = await clientRes.get({
-    path: `themes/${response.body.themes[0].id}/assets`,
-    query: {
-      asset: { key: 'layout/theme.liquid' },
-    },
-  });
+  try {
+    const response2 = await clientRes.get({
+      path: `themes/${response.body.themes[0].id}/assets`,
+      query: {
+        asset: { key: 'layout/theme.liquid' },
+      },
+    });
+  } catch (e) {
+    console.log(`${e} session-info ${session}`);
+  }
 
   // console.log(response2.body.asset.value);
 
@@ -114,18 +121,20 @@ async function addScriptIntoTheme(data) {
   );
 
   // console.log(updatedThemeCode);
-
-  const response3 = await clientRes.put({
-    // update theme.liquid
-    path: `themes/${response.body.themes[0].id}/assets`,
-    data: {
-      asset: {
-        key: 'layout/theme.liquid',
-        value: updatedThemeCode,
+  try {
+    const response3 = await clientRes.put({
+      // update theme.liquid
+      path: `themes/${response.body.themes[0].id}/assets`,
+      data: {
+        asset: {
+          key: 'layout/theme.liquid',
+          value: updatedThemeCode,
+        },
       },
-    },
-  });
-
+    });
+  } catch (e) {
+    console.log(`${e} session-info ${session}`);
+  }
   // console.log("final",response3.body);
 
   const { pixelTemplate } = JSON.parse(fs.readFileSync('./config.json')); // get pixel code from local file
