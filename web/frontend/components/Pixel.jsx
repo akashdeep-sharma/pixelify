@@ -1,4 +1,4 @@
-import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayout, Loading, Frame } from "@shopify/polaris";
+import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayout, Loading, Frame, Banner } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import {useState, useCallback, useLayoutEffect} from 'react';
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
@@ -31,6 +31,7 @@ export default function Pixel() {
 
     const [ progress , setProgress ] = useState(false);
 
+    const [ showBanner , setShowBanner ] = useState(false);
 
     const [ newPixelCard , setnewPixelCard ] = useState(false);
 
@@ -57,6 +58,12 @@ export default function Pixel() {
         console.log("Added new pixel", data);
         setnewPixelCard(false);
         await loadShopConfig();
+        setShowBanner("success");
+        setTimeout( () => setShowBanner(false), 4000 )
+        }
+        else {
+          setShowBanner("critical");
+          setTimeout( () => setShowBanner(false), 4000 )
         }
         setProgress(false)
 
@@ -76,7 +83,13 @@ export default function Pixel() {
       if (data.status == 200){
       data = await data.text();
       console.log("Deleted pixel", data);
-      loadShopConfig();
+      await loadShopConfig();
+      setShowBanner("success");
+      setTimeout( () => setShowBanner(false), 4000 )
+      }
+      else {
+        setShowBanner("critical");
+        setTimeout( () => setShowBanner(false), 4000 )
       }
       setProgress(false)
 
@@ -92,9 +105,18 @@ export default function Pixel() {
       <Layout>
         <Layout.Section>
           <Frame>
+          
           { progress && <Loading></Loading> }
+          <br></br>
+          { showBanner && <Banner
+              title= { showBanner == "success"  ? "Chages Completed Sucessfully." : "Error, please try again after sometime."}
+              status= { showBanner }
+              onDismiss={() => {setShowBanner(false)}}
+            /> }
+          <br></br>
         {pixelId.map( (id, index ) => (  
             <Card
+            id= {index}
             title={ "Pixel Number " + (index + 1) }
             secondaryFooterActions={[{content: 'Delete', destructive:true, onAction: () => deletPixelID(id) }]}
           >
