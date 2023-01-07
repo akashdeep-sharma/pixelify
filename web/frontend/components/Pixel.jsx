@@ -1,4 +1,4 @@
-import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayout } from "@shopify/polaris";
+import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayout, Loading, Frame } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import {useState, useCallback, useLayoutEffect} from 'react';
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
@@ -11,17 +11,16 @@ export default function Pixel() {
     async function loadShopConfig() {
         var data = await fetch("/api/getIntialConfig");
     
-        if (data.status == 200) 
+        if (data.status == 200){
           data = await data.json();
 
-        console.log("load data", data);
-        setpixelId(data);
+          console.log("load data", data);
+          setpixelId(data);
+        }
+    }
 
-      }
 
 
-
-    
 
       useLayoutEffect(() => {
         loadShopConfig();
@@ -30,7 +29,7 @@ export default function Pixel() {
 
     const [ pixelId , setpixelId ] = useState([]);
 
- 
+    const [ progress , setProgress ] = useState(false);
 
 
     const [ newPixelCard , setnewPixelCard ] = useState(false);
@@ -44,6 +43,7 @@ export default function Pixel() {
     );
 
     async function onSubmitNewPixel() {
+        setProgress(true)
         var data = await fetch("/api/addPixel",{
           method: 'POST',
           headers: {
@@ -55,13 +55,16 @@ export default function Pixel() {
         if (data.status == 200){
         data = await data.text();
         console.log("Added new pixel", data);
-        setnewPixelCard(false)
+        setnewPixelCard(false);
+        await loadShopConfig();
         }
+        setProgress(false)
 
     }
 
 
     async function deletPixelID(id) {
+      setProgress(true)
       var data = await fetch("/api/deletPixelID",{
         method: 'POST',
         headers: {
@@ -75,6 +78,7 @@ export default function Pixel() {
       console.log("Deleted pixel", data);
       loadShopConfig();
       }
+      setProgress(false)
 
   }
 
@@ -87,12 +91,14 @@ export default function Pixel() {
       />
       <Layout>
         <Layout.Section>
+          <Frame>
+          { progress && <Loading></Loading> }
         {pixelId.map( (id, index ) => (  
             <Card
             title={ "Pixel Number " + (index + 1) }
-            secondaryFooterActions={[{content: 'Delete', onAction: () => deletPixelID(id) }]}
+            secondaryFooterActions={[{content: 'Delete', destructive:true, onAction: () => deletPixelID(id) }]}
           >
-            <Card.Section title={id}>
+            <Card.Section title= { "ID: " + id}>
               
             </Card.Section>
           </Card>
@@ -119,10 +125,17 @@ export default function Pixel() {
 
             </Card>
         )}
+        <br></br>
+        <Button  primary onClick = { () => setnewPixelCard(true)}>Add New Pixel</Button>;
+
+    
+        </Frame>
+
+
+
         </Layout.Section>
-        <Layout.Section>
-        <Button primary onClick = { () => setnewPixelCard(true)}>Add New Pixel</Button>;
-        </Layout.Section>
+
+
       </Layout>
     </Page>
   );
