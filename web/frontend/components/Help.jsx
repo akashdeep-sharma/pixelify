@@ -10,10 +10,11 @@ export default function Help() {
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            <Heading>Help</Heading>
+            <Heading>Thankyou for choosing Pixelify</Heading>
             <TextContainer>
-              <p>Body</p>
-            </TextContainer>
+<br></br>
+         For support, please send us email on <b>support@aaowle.com</b>
+           </TextContainer>
           </Card>
         </Layout.Section>
       </Layout>
