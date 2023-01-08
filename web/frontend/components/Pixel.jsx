@@ -2,6 +2,7 @@ import { Card, Page, Layout, TextContainer, Heading, Button, TextField, FormLayo
 import { TitleBar } from "@shopify/app-bridge-react";
 import {useState, useCallback, useLayoutEffect} from 'react';
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
+import EmptyStateExample from "./EmptyCard";
 
 export default function Pixel() {
 
@@ -109,11 +110,12 @@ export default function Pixel() {
           { progress && <Loading></Loading> }
           <br></br>
           { showBanner && <Banner
-              title= { showBanner == "success"  ? "Chages Completed Sucessfully." : "Error, please try again after sometime."}
+              title= { showBanner == "success"  ? "Done, Please refresh the page to see changes on site." : "Error, please try again after sometime."}
               status= { showBanner }
               onDismiss={() => {setShowBanner(false)}}
             /> }
           <br></br>
+          { pixelId.length == 0 && <EmptyStateExample onAdd={setnewPixelCard}></EmptyStateExample>}
         {pixelId.map( (id, index ) => (  
             <Card
             id= {index}
